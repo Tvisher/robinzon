@@ -12,7 +12,9 @@
 
     <div class="application-zone__content">
       <router-view v-slot="{ Component }">
-        <component :is="Component" @searchStartEvent="searchStart" />
+        <transition mode="out-in" name="fade">
+          <component :is="Component" @searchStartEvent="searchStart" />
+        </transition>
       </router-view>
     </div>
   </div>
@@ -24,6 +26,18 @@ const searchStart = () => {
   isSearchStart.value = true;
   setTimeout(() => (searchTransitionEnd.value = true), 600);
 };
+
+import { useAppData } from "@/stores/AppData";
+const appData = useAppData();
+const userIsAut = appData.isAuth;
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
+
+if (!userIsAut) {
+  console.log(userIsAut);
+  router.push("Auth");
+}
+
 const isSearchStart = ref(false);
 const searchTransitionEnd = ref(false);
 const requestMessage = ref("");
@@ -31,4 +45,14 @@ const getRequest = () => {
   console.log(requestMessage.value);
 };
 </script>
-<style scoped></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

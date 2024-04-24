@@ -52,6 +52,7 @@
               placeholder="Email"
               @focus="inputFocus"
               @blur="inputBlur"
+              v-model.trim="userData.login"
             />
           </div>
         </label>
@@ -96,6 +97,7 @@
               placeholder="Password"
               @focus="inputFocus"
               @blur="inputBlur"
+              v-model.trim="userData.password"
             />
             <div
               class="label-filed__show-or-hide"
@@ -121,14 +123,35 @@
 </template>
 <script setup>
 import { ref } from "vue";
+import { useAppData } from "@/stores/AppData";
+import { storeToRefs } from "pinia";
+const appData = useAppData();
+const { isAuth } = storeToRefs(appData);
+
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
+
+const userData = ref({
+  login: "",
+  password: "",
+  errors: [],
+});
 const showPass = ref(false);
 const sending = ref(false);
 
 const getAuth = (event) => {
+  const data = userData.value;
+  if (!data.login) {
+  }
+
   sending.value = true;
-  setTimeout(() => {
-    sending.value = false;
-  }, 2000);
+  if (data.login == "admin" && data.password == "admin") {
+    setTimeout(() => {
+      isAuth.value = true;
+      router.push("/");
+      sending.value = false;
+    }, 2000);
+  }
 };
 
 const inputFocus = (event) =>
