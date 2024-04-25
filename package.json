@@ -11,7 +11,9 @@
   "dependencies": {
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.2"
+    "vue-router": "^4.3.2",
+    "vue-showdown": "^4.2.0",
+    "vue3-slide-up-down": "^2.0.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",

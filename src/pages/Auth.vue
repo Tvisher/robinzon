@@ -12,7 +12,12 @@
         @submit.prevent="getAuth"
         :class="{ sending: sending }"
       >
-        <label class="auth_form__label error">
+        <label
+          class="auth_form__label"
+          :class="{
+            error: userData.errors.includes('login-error'),
+          }"
+        >
           <span>Логин</span>
           <div class="label-filed-wrapper">
             <div class="label-filed__ico">
@@ -53,11 +58,17 @@
               @focus="inputFocus"
               @blur="inputBlur"
               v-model.trim="userData.login"
+              @input="removeFieldError('login-error')"
             />
           </div>
         </label>
 
-        <label class="auth_form__label">
+        <label
+          class="auth_form__label"
+          :class="{
+            error: userData.errors.includes('password-error'),
+          }"
+        >
           <span>Пароль</span>
           <div class="label-filed-wrapper">
             <div class="label-filed__ico">
@@ -98,31 +109,34 @@
               @focus="inputFocus"
               @blur="inputBlur"
               v-model.trim="userData.password"
+              @input="removeFieldError('password-error')"
             />
             <div
               class="label-filed__show-or-hide"
-              @mousedown="showPass = true"
-              @mouseup="showPass = false"
+              @pointerdown="showPass = true"
+              @pointerup="showPass = false"
             ></div>
           </div>
         </label>
         <div class="custom-cb">
-          <input type="checkbox" class="custom-cb__input" />
+          <input
+            type="checkbox"
+            class="custom-cb__input"
+            v-model="userData.remember"
+          />
           <span class="custom-cb__text">Запомнить меня</span>
         </div>
 
         <button type="submit" class="btn submit-btn">ВОЙТИ</button>
         <div class="form-errors">
-          <!-- <span>Запоните поле Логин</span> -->
-          <!-- <span>Запоните поле Пароль</span> -->
-          <span>Неверный Логин или Пароль</span>
+          <span v-for="error in errorsTranslate">{{ error }}</span>
         </div>
       </form>
     </div>
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useAppData } from "@/stores/AppData";
 import { storeToRefs } from "pinia";
 const appData = useAppData();
@@ -135,21 +149,63 @@ const userData = ref({
   login: "",
   password: "",
   errors: [],
+  remember: false,
 });
 const showPass = ref(false);
 const sending = ref(false);
+const errorsTranslate = computed(() => {
+  return userData.value.errors.map((el) => {
+    switch (el) {
+      case "login-error":
+        return "Введите Логин";
+        break;
+      case "password-error":
+        return "Введите Пароль";
+        break;
+      case "auth-error":
+        return "Не верный Логин или Пароль";
+        break;
+      default:
+        break;
+    }
+  });
+});
+
+const removeFieldError = (error) => {
+  userData.value.errors = userData.value.errors.filter((el) => {
+    console.log(el == "auth-error");
+    return el != error && el !== "auth-error";
+  });
+};
 
 const getAuth = (event) => {
   const data = userData.value;
   if (!data.login) {
+    data.errors.push("login-error");
+  }
+
+  if (!data.password) {
+    data.errors.push("password-error");
+  }
+
+  const isAdmin = data.login == "admin" && data.password == "admin";
+  if (!isAdmin && data.login && data.password) {
+    data.errors.push("auth-error");
+  }
+
+  if (data.errors.length > 0) {
+    return;
   }
 
   sending.value = true;
-  if (data.login == "admin" && data.password == "admin") {
+  if (isAdmin) {
     setTimeout(() => {
       isAuth.value = true;
       router.push("/");
       sending.value = false;
+      if (data.remember) {
+        localStorage.setItem("isAuth", true);
+      }
     }, 2000);
   }
 };
