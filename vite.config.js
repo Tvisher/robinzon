@@ -5,7 +5,7 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  base: './',
+  base: '/site/',
   // base: '/analytics-service/',
   build: {
     outDir: './docs',

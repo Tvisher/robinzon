@@ -26,22 +26,21 @@ const searchStart = () => {
   isSearchStart.value = true;
   setTimeout(() => (searchTransitionEnd.value = true), 600);
 };
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores/AuthStore.js";
+const authStore = useAuthStore();
 
-import { useAppData } from "@/stores/AppData";
-const appData = useAppData();
-const userIsAut = appData.isAuth;
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 const router = useRouter();
-
-if (!userIsAut) {
-  router.push("Auth");
-}
 
 const isSearchStart = ref(false);
 const searchTransitionEnd = ref(false);
-const requestMessage = ref("");
-const getRequest = () => {
-  console.log(requestMessage.value);
-};
+
+const userIsAut = authStore.userState.status.loggedIn;
+if (!userIsAut) {
+  router.push("/auth");
+} else {
+  router.push("/");
+}
 </script>
 <style scoped></style>

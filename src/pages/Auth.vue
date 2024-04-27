@@ -136,14 +136,21 @@
   </div>
 </template>
 <script setup>
+import axios from "axios";
 import { ref, computed } from "vue";
-import { useAppData } from "@/stores/AppData";
-import { storeToRefs } from "pinia";
-const appData = useAppData();
-const { isAuth } = storeToRefs(appData);
 
-import { useRoute, useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores/AuthStore.js";
+const authStore = useAuthStore();
+
+const { userState } = storeToRefs(authStore);
+
+import { useRouter } from "vue-router";
 const router = useRouter();
+const userIsAut = userState.value.status.loggedIn;
+if (userIsAut) {
+  router.push("/");
+}
 
 const userData = ref({
   login: "",
@@ -188,26 +195,73 @@ const getAuth = (event) => {
     data.errors.push("password-error");
   }
 
-  const isAdmin = data.login == "admin" && data.password == "admin";
-  if (!isAdmin && data.login && data.password) {
-    data.errors.push("auth-error");
-  }
+  // const isAdmin = data.login == "admin" && data.password == "admin";
+  // if (!isAdmin && data.login && data.password) {
+  //   data.errors.push("auth-error");
+  // }
 
   if (data.errors.length > 0) {
     return;
   }
-
   sending.value = true;
-  if (isAdmin) {
-    setTimeout(() => {
-      isAuth.value = true;
+  const rememberUser = data.remember;
+  authStore
+    .logIn({
+      authData: {
+        username: userData.value.login,
+        password: userData.value.password,
+      },
+      rememberUser,
+    })
+    .then(() => {
       router.push("/");
+    })
+    .catch((error) => {
+      data.errors.push("auth-error");
+    })
+    .finally((res) => {
       sending.value = false;
-      if (data.remember) {
-        localStorage.setItem("isAuth", true);
-      }
-    }, 2000);
-  }
+    });
+
+  // const url = "http://49.12.122.181:8034/login";
+  // axios
+  //   .post(url, {
+  //     username: userData.value.login,
+  //     password: userData.value.password,
+  //   })
+  //   .then((response) => {
+  //     if (response.status == 200) {
+  //       const resp = JSON.stringify(response.data);
+  //       if (data.remember) {
+  //         localStorage.setItem("user", resp);
+  //       } else {
+  //         sessionStorage.setItem("user", resp);
+  //       }
+  //       userState.value.status.loggedIn = true;
+  //       userState.value.user = JSON.parse(resp);
+  //       router.push("/");
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //     data.errors.push("auth-error");
+  //   })
+  //   .finally((res) => {
+  //     sending.value = false;
+  //   });
+
+  // if (isAdmin) {
+  //   setTimeout(() => {
+  //     userState.value.status.loggedIn = true;
+  //     router.push("/");
+  //     sending.value = false;
+  //     if (data.remember) {
+  //       localStorage.setItem("user", true);
+  //     } else {
+  //       sessionStorage.setItem("user", true);
+  //     }
+  //   }, 2000);
+  // }
 };
 
 const inputFocus = (event) =>
