@@ -147,8 +147,8 @@ const { userState } = storeToRefs(authStore);
 
 import { useRouter } from "vue-router";
 const router = useRouter();
-const userIsAut = userState.value.status.loggedIn;
-if (userIsAut) {
+const userIsAuth = userState.value.status.loggedIn;
+if (userIsAuth) {
   router.push("/");
 }
 
@@ -195,22 +195,15 @@ const getAuth = (event) => {
     data.errors.push("password-error");
   }
 
-  // const isAdmin = data.login == "admin" && data.password == "admin";
-  // if (!isAdmin && data.login && data.password) {
-  //   data.errors.push("auth-error");
-  // }
-
   if (data.errors.length > 0) {
     return;
   }
   sending.value = true;
   const rememberUser = data.remember;
+  const authData = `username=${userData.value.login}&password=${userData.value.password}`;
   authStore
     .logIn({
-      authData: {
-        username: userData.value.login,
-        password: userData.value.password,
-      },
+      authData,
       rememberUser,
     })
     .then(() => {
@@ -222,46 +215,6 @@ const getAuth = (event) => {
     .finally((res) => {
       sending.value = false;
     });
-
-  // const url = "http://49.12.122.181:8034/login";
-  // axios
-  //   .post(url, {
-  //     username: userData.value.login,
-  //     password: userData.value.password,
-  //   })
-  //   .then((response) => {
-  //     if (response.status == 200) {
-  //       const resp = JSON.stringify(response.data);
-  //       if (data.remember) {
-  //         localStorage.setItem("user", resp);
-  //       } else {
-  //         sessionStorage.setItem("user", resp);
-  //       }
-  //       userState.value.status.loggedIn = true;
-  //       userState.value.user = JSON.parse(resp);
-  //       router.push("/");
-  //     }
-  //   })
-  //   .catch((error) => {
-  //     console.log(error);
-  //     data.errors.push("auth-error");
-  //   })
-  //   .finally((res) => {
-  //     sending.value = false;
-  //   });
-
-  // if (isAdmin) {
-  //   setTimeout(() => {
-  //     userState.value.status.loggedIn = true;
-  //     router.push("/");
-  //     sending.value = false;
-  //     if (data.remember) {
-  //       localStorage.setItem("user", true);
-  //     } else {
-  //       sessionStorage.setItem("user", true);
-  //     }
-  //   }, 2000);
-  // }
 };
 
 const inputFocus = (event) =>
