@@ -136,6 +136,7 @@ const getRequest = () => {
     emit("searchStartEvent");
   }
   sendWsMessage();
+  showErrorModal.value = false;
 };
 
 const closeErrorModal = () => {
@@ -312,7 +313,7 @@ const websocketInit = () => {
               reconnectWebSocket();
             })
             .catch((error) => {
-              console.log("Ошибка переподключения");
+              console.log("Connection failed.");
             });
         } else {
           authStore.logOut();

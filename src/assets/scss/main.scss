@@ -1355,3 +1355,26 @@ html {
   background-size: contain;
   cursor: pointer;
 }
+
+@media (max-width: 980px) {
+  .error-modal {
+    width: 84vw;
+  }
+  .error-modal__wrapper {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .error-modal__content {
+    padding-left: 15px;
+  }
+  .error-modal__title {
+    margin-bottom: 15px;
+    font-size: 22px;
+  }
+  .error-modal__message {
+    font-size: 14px;
+  }
+  .error-modal__end {
+    font-size: 18px;
+  }
+}
