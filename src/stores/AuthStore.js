@@ -21,13 +21,34 @@ export const useAuthStore = defineStore("AuthStore ", () => {
     const userState = ref(userInfo);
 
     const logOut = () => {
-        localStorage.removeItem("user");
-        sessionStorage.removeItem("user");
-        userState.value = { status: { loggedIn: false }, user: null }
+        return new Promise((resolve, reject) => {
+
+            const url = import.meta.env.MODE == "development" ? "http://49.12.122.181:8034/logout" : `/logout`;
+            axios
+                .post(url, { 'refresh_token': userState.value.user.refresh_token },
+                    {
+                        headers: { "Content-Type": "application/json" }
+                    }
+                )
+                .then((response) => {
+                    console.log(response);
+                    resolve();
+                })
+                .catch((error) => {
+                    reject()
+                })
+                .finally(() => {
+                    localStorage.removeItem("user");
+                    sessionStorage.removeItem("user");
+                    userState.value = { status: { loggedIn: false }, user: null }
+                })
+
+        })
+
     }
 
     const logIn = async (params) => {
-        const { protocol, host, pathname } = window.location;
+        // const { protocol, host, pathname } = window.location;
         return new Promise((resolve, reject) => {
             const url = import.meta.env.MODE == "development" ? "http://49.12.122.181:8034/login"
                 : `/login`;
@@ -46,7 +67,7 @@ export const useAuthStore = defineStore("AuthStore ", () => {
                         // Назначем время жизни токенов на клиенте 
                         respAuthData.expires_at = new Date(Date.now() + respAuthData.expires_in * 1000);
                         respAuthData.refresh_token_expires_at = new Date(Date.now() + respAuthData.refresh_expires_in * 1000);
-                        // console.log(respAuthData);
+                        console.log(respAuthData);
 
                         if (params.rememberUser) {
                             localStorage.setItem("user", JSON.stringify(respAuthData));

@@ -12,6 +12,7 @@
     "@soerenmartius/vue3-clipboard": "^0.1.2",
     "axios": "^1.6.8",
     "pinia": "^2.1.7",
+    "uuid": "^9.0.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.2",
     "vue-showdown": "^4.2.0",

@@ -53,7 +53,7 @@ onBeforeMount(async () => {
       const refreshTokenIsExpired =
         new Date(userData.user.refresh_token_expires_at) < new Date();
 
-      if (refreshTokenIsExpired) {
+      if (!refreshTokenIsExpired) {
         authStore
           .updateAccessToken()
           .then(() => {
@@ -67,8 +67,8 @@ onBeforeMount(async () => {
             });
           });
       } else {
-        router.push("/auth");
         authStore.logOut();
+        router.push("/auth");
         appLoad.value = true;
       }
     } else {

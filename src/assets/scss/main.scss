@@ -235,6 +235,10 @@ html {
 }
 
 .form-btn {
+  &.blocked {
+    cursor: progress;
+    opacity: 0.5;
+  }
   cursor: pointer;
   flex-shrink: 0;
   border: none;
@@ -1107,7 +1111,7 @@ html {
   }
   .agent-status {
     margin-top: 30px;
-    margin-left: -80px;
+    // margin-left: -80px;
   }
 }
 
@@ -1278,4 +1282,76 @@ html {
     flex-direction: column;
     gap: 10px;
   }
+}
+
+.error-modal {
+  z-index: 999;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 150px;
+  padding: 30px;
+  border-radius: 10px;
+  background: rgba(115, 130, 153, 0.7);
+  box-shadow: 10px 10px 0px 0px rgba(12, 20, 40, 0.6);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-family: Montserrat;
+  max-width: 960px;
+  width: 100%;
+}
+
+.error-modal__wrapper {
+  display: flex;
+  gap: 30px;
+}
+
+.error-modal__ico {
+  background-color: #fff;
+  border-radius: 6px;
+  background: #ff8383;
+  width: 50px;
+  height: 50px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg width='30' height='31' viewBox='0 0 30 31' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5 25.5H25M11.7499 13H18.2499M9.74976 19.25H20.2498M7.5 25.5L13.75 6.75H16.25L22.5 25.5' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e ");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 30px 30px;
+  flex-shrink: 0;
+}
+
+.error-modal__content {
+  border-left: 1px solid rgba(255, 255, 255, 0.4);
+  padding-left: 30px;
+}
+
+.error-modal__title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 128%;
+  margin-bottom: 20px;
+}
+
+.error-modal__message {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 162%;
+}
+
+.error-modal__end {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 130%;
+}
+
+.error-modal__close {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg width='24' height='25' viewBox='0 0 24 25' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg clip-path='url(%23clip0_662_137)'%3e%3cpath d='M18 6.5L6 18.5' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3e%3cpath d='M6 6.5L18 18.5' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/g%3e%3cdefs%3e%3cclipPath id='clip0_662_137'%3e%3crect width='24' height='24' fill='white' transform='translate(0 0.5)'/%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e ");
+  background-repeat: no-repeat;
+  background-size: contain;
+  cursor: pointer;
 }

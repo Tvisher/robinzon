@@ -5,8 +5,10 @@
       <div class="agent-response">
         <div
           class="agent-response__head"
-          @click="message.showAgentResponce = !message.showAgentResponce"
-          :class="{ open: message.showAgentResponce }"
+          @click="
+            props.message.showAgentResponce = !props.message.showAgentResponce
+          "
+          :class="{ open: props.message.showAgentResponce }"
         >
           <span>Вывод агента</span>
           <div class="arrow">
@@ -27,7 +29,7 @@
           </div>
         </div>
         <div class="agent-response__content">
-          <Vue3SlideUpDown v-model="message.showAgentResponce">
+          <Vue3SlideUpDown v-model="props.message.showAgentResponce">
             <div class="descr">
               Агент, специально созданный для вашей задачи, будет сгенерирован
               для предоставления наиболее точных и релевантных результатов
@@ -36,66 +38,93 @@
             <hr />
             <div
               class="agent-response__inner"
-              v-html="message.agentResponce"
+              v-html="props.message.agentResponce"
             ></div>
           </Vue3SlideUpDown>
         </div>
       </div>
-      <Vue3SlideUpDown v-model="message.report.hasReport">
-        <div class="agent-report">
-          <div class="agent-report__content">
-            <div class="agent-report__title">Исследовательский отчет</div>
-            <div v-html="message.report.value"></div>
+      <div v-if="props.message.messageStatus != 'error'">
+        <Vue3SlideUpDown v-model="props.message.report.hasReport">
+          <div class="agent-report">
+            <div class="agent-report__content">
+              <div class="agent-report__title">Исследовательский отчет</div>
+              <div v-html="props.message.report.value"></div>
+            </div>
           </div>
-        </div>
-      </Vue3SlideUpDown>
+        </Vue3SlideUpDown>
 
-      <div class="agent-report-btns" v-if="message.messageStatus == 'finished'">
-        <div class="agent-report-btn _clipboard" @click="copyToClipboard">
-          скопировать в буфер обмена
-        </div>
-        <a
-          :href="message.btns.pdf"
-          v-if="message.btns.pdf"
-          target="_blank"
-          class="agent-report-btn _pdf"
-          download
-          >скачать pdf</a
+        <div
+          class="agent-report-btns"
+          v-if="props.message.messageStatus == 'finished'"
         >
+          <div class="agent-report-btn _clipboard" @click="copyToClipboard">
+            скопировать в буфер обмена
+          </div>
+          <a
+            :href="message.btns.pdf"
+            v-if="message.btns.pdf"
+            target="_blank"
+            class="agent-report-btn _pdf"
+            download
+            >скачать pdf</a
+          >
 
-        <a
-          :href="message.btns.docx"
-          v-if="message.btns.docx"
-          target="_blank"
-          class="agent-report-btn _docs"
-          download
-          >скачать docx</a
+          <a
+            :href="message.btns.docx"
+            v-if="message.btns.docx"
+            target="_blank"
+            class="agent-report-btn _docs"
+            download
+            >скачать docx</a
+          >
+        </div>
+        <div
+          class="agent-status"
+          v-if="props.message.messageStatus != 'finished'"
         >
+          <div class="status-ico">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="status-text">Подождите, идет генерация исследования</div>
+        </div>
       </div>
-      <div class="agent-status" v-if="message.messageStatus != 'finished'">
-        <div class="status-ico">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <div class="status-text">Подождите, идет генерация исследования</div>
+      <div class="agent-report" v-else>
+        <h1>
+          Попробуйте сгенерировать запрос "{{ props.message.requestMessage }}"
+          снова
+        </h1>
+        <button
+          :class="{ blocked: props.searchInProgress }"
+          type="button"
+          class="form-btn"
+          @click="regenerateResponse"
+        >
+          СГЕНЕРИРОВАТЬ
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { Vue3SlideUpDown } from "vue3-slide-up-down";
 import { toClipboard } from "@soerenmartius/vue3-clipboard";
 
 const props = defineProps({
   message: Object,
+  searchInProgress: Boolean,
 });
 
-const message = ref(props.message);
+const regenerateResponse = () => {
+  if (props.searchInProgress) return;
+  emit("regenerateResponse", props.message.id);
+};
+
+const emit = defineEmits(["regenerateResponse"]);
 
 const copyToClipboard = () => {
   toClipboard(props.message.report.text);

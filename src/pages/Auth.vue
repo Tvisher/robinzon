@@ -52,6 +52,7 @@
               </svg>
             </div>
             <input
+              name="username"
               type="text"
               class="filed-input"
               placeholder="Email"
@@ -103,6 +104,7 @@
               </svg>
             </div>
             <input
+              name="password"
               :type="showPass ? 'text' : 'password'"
               class="filed-input _pass"
               placeholder="Password"
@@ -156,7 +158,7 @@ const userData = ref({
   login: "",
   password: "",
   errors: [],
-  remember: false,
+  remember: true,
 });
 const showPass = ref(false);
 const sending = ref(false);
