@@ -6,7 +6,6 @@ import path from 'path';
 export default defineConfig({
   plugins: [vue()],
   base: '/site/',
-  // base: '/analytics-service/',
   build: {
     outDir: './docs',
     rollupOptions: {
